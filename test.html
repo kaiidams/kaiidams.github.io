@@ -1,3 +1,61 @@
-<a href="intent://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;">Avocado</a>
-<a href="intent://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf?mode=ar_only#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https://developers.google.com/ar;end;">Avocado</a>
-<model-viewer style="width: 500px; height: 500px; border: 1px solid red;" ar alt="A 3D model of an astronaut." src="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF/Avocado.gltf"></model-viewer>
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <div style="border: 1px solid blue">
+    <video id="video" width="320" height="240" autoplay></video>
+  </div>
+  <div style="border: 1px solid red">
+    <canvas id="canvas" width="320" height="240" autoplay></canvas>
+  <script>
+//<!--
+  const pose = new Pose({locateFile: (file) => {
+    return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
+  }});
+  pose.setOptions({
+  upperBodyOnly: false,
+  smoothLandmarks: true,
+  minDetectionConfidence: 0.5,
+  minTrackingConfidence: 0.5
+  });
+  var i = 0;
+
+  pose.onResults((results) => {
+    var canvasCtx = context;
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.drawImage(
+        results.image, 0, 0, canvasElement.width, canvasElement.height);
+    drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS,
+                  {color: '#00FF00', lineWidth: 4});
+    drawLandmarks(canvasCtx, results.poseLandmarks,
+                  {color: '#FF0000', lineWidth: 2});
+    canvasCtx.restore();
+    i++;
+    if (i > 100) {
+      console.log(results);
+      i = 0;
+    }    
+  });
+
+  var videoElement = document.getElementById('video');
+  var canvasElement = document.getElementById('canvas');
+  var context = canvasElement.getContext('2d');
+
+  const camera = new Camera(videoElement, {
+    onFrame: async () => {
+      await pose.send({image: videoElement});
+    },
+    width: 320,
+    height: 240
+  });
+  camera.start();
+//-->
+  </script>
+</body>
+</html>
