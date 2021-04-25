@@ -12,7 +12,11 @@
   </div>
   <div style="border: 1px solid red">
     <canvas id="canvas" width="320" height="240" autoplay></canvas>
-  <script>
+  <div>
+  <div style="border: 1px solid green">
+    <textarea id='textarea'></textarea>
+  </div>
+  <script>    
 //<!--
   const pose = new Pose({locateFile: (file) => {
     return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
@@ -24,6 +28,7 @@
   minTrackingConfidence: 0.5
   });
   var i = 0;
+  var data = [];
 
   pose.onResults((results) => {
     var canvasCtx = context;
@@ -36,15 +41,18 @@
     drawLandmarks(canvasCtx, results.poseLandmarks,
                   {color: '#FF0000', lineWidth: 2});
     canvasCtx.restore();
+    data.push(results);
     i++;
     if (i > 100) {
       console.log(results);
+      textareaElement.value = JSON.stringify(data);
       i = 0;
-    }    
+    }
   });
 
   var videoElement = document.getElementById('video');
   var canvasElement = document.getElementById('canvas');
+  var textareaElement = document.getElementById('textarea');
   var context = canvasElement.getContext('2d');
 
   const camera = new Camera(videoElement, {
