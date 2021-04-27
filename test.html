@@ -41,14 +41,40 @@
     drawLandmarks(canvasCtx, results.poseLandmarks,
                   {color: '#FF0000', lineWidth: 2});
     canvasCtx.restore();
-    data.push(results);
-    i++;
-    if (i > 100) {
-      console.log(results);
-      textareaElement.value = JSON.stringify(data);
-      i = 0;
-    }
+
+    websocket.send(JSON.stringify({ poseLandmarks: results.poseLandmarks }));
   });
+
+  const wsUri = "ws://127.0.0.1:80/";
+  var websocket = new WebSocket(wsUri);
+
+
+  websocket.onopen = function (e) {
+        writeToScreen("CONNECTED");
+        doSend("WebSocket rocks");
+    };
+
+    websocket.onclose = function (e) {
+        writeToScreen("DISCONNECTED");
+    };
+
+    websocket.onmessage = function (e) {
+        writeToScreen("<span>RESPONSE: " + e.data + "</span>");
+    };
+
+    websocket.onerror = function (e) {
+        writeToScreen("<span class=error>ERROR:</span> " + e.data);
+    };
+
+    function doSend(message) {
+        //writeToScreen("SENT: " + message);
+        websocket.send(message);
+    }
+
+  function writeToScreen(s) {
+    textareaElement.value += s;
+  }
+
 
   var videoElement = document.getElementById('video');
   var canvasElement = document.getElementById('canvas');
