@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+        <style>
+            body {
+                margin: 8px;
+            }
+            .canvas {
+                display: block;
+                image-rendering: pixelated;
+            }
+        </style>
+        <script>
+            window.addEventListener("load", () => {
+                var A = (
+                    "  X   XXXX   XXX  " +
+                    " X X  X   X X   X " +
+                    "X   X X   X X     " +
+                    "XXXXX XXXX  X     " +
+                    "X   X X   X X     " +
+                    "X   X X   X X   X " +
+                    "X   X XXXX   XXX  " +
+                    "                  "
+                )
+                /** @type HTMLCanvasElement */
+                var canvas = document.querySelector("#canvas");
+
+                let scale = Math.min(
+                    Math.floor(window.screen.width / canvas.width),
+                    Math.floor(window.screen.height / canvas.height));
+
+                var dpr = window.devicePixelRatio || 1;
+                canvas.style.width = (scale * canvas.width / dpr) + "px";
+                canvas.style.height = (scale * canvas.height / dpr) + "px";
+                console.log(dpr);
+
+                var context = canvas.getContext("2d");
+                const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imgData.data;
+                let i = 0;
+                for (let y = 0; y < canvas.height; y++) {
+                    for (let x = 0; x < canvas.width; x++) {
+                        let ty = Math.floor(y / 8) % 3;
+                        let dx = (x + ty * 6) % 18;
+                        let dy = y % 8;
+                        let p = A[dy * 18 + dx] == " " ? 0 : 128;
+                        pixels[i++] = p;
+                        pixels[i++] = p;
+                        pixels[i++] = p;
+                        pixels[i++] = 255;
+                    }
+                }
+                context.putImageData(imgData, 0, 0);
+                console.log(context);
+                context.fillStyle = "green";
+                context.fillRect(10, 10, 20, 30);
+
+                console.log(context.webkitBackingStorePixelRatio);
+            });
+        </script>
+    </head>
+    <body>
+        <canvas id="canvas" class="canvas" width="240" height="320"></canvas>
+    </body>
+</html>
