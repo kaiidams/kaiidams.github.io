@@ -28,9 +28,10 @@
                 var canvas = document.querySelector("#canvas");
 
                 var dpr = window.devicePixelRatio || 1;
-                let scale = Math.min(
-                    Math.floor(dpr * window.innerWidth / canvas.width),
-                    Math.floor(dpr * window.innerHeight / canvas.height));
+                let scale = Math.floor(
+                    dpr * Math.min(
+                        window.innerWidth / canvas.width,
+                        window.innerHeight / canvas.height));
 
                 canvas.style.width = (scale * canvas.width / dpr) + "px";
                 canvas.style.height = (scale * canvas.height / dpr) + "px";
@@ -58,10 +59,14 @@
                 context.fillRect(10, 10, 20, 30);
 
                 console.log(context.webkitBackingStorePixelRatio);
+
+                var output = document.querySelector("#output");
+                output.innerHTML = `${scale} ${window.devicePixelRatio} ${window.innerWidth} ${window.innerHeight} `;
             });
         </script>
     </head>
     <body>
         <canvas id="canvas" class="canvas" width="240" height="320"></canvas>
+        <div id="output"></div>
     </body>
 </html>
