@@ -27,11 +27,11 @@
                 /** @type HTMLCanvasElement */
                 var canvas = document.querySelector("#canvas");
 
-                let scale = Math.min(
-                    Math.floor(window.screen.width / canvas.width),
-                    Math.floor(window.screen.height / canvas.height));
-
                 var dpr = window.devicePixelRatio || 1;
+                let scale = Math.min(
+                    Math.floor(dpr * window.innerWidth / canvas.width),
+                    Math.floor(dpr * window.innerHeight / canvas.height));
+
                 canvas.style.width = (scale * canvas.width / dpr) + "px";
                 canvas.style.height = (scale * canvas.height / dpr) + "px";
                 console.log(dpr);
