@@ -6,6 +6,7 @@
         <style>
             body {
                 margin: 8px;
+                background-color: black;
             }
             .canvas {
                 display: block;
@@ -43,13 +44,15 @@
                 let i = 0;
                 for (let y = 0; y < canvas.height; y++) {
                     for (let x = 0; x < canvas.width; x++) {
-                        let ty = Math.floor(y / 8) % 3;
-                        let dx = (x + ty * 6) % 18;
+                        let cy = Math.floor(y / 8);
+                        let dx = (x + (cy % 3) * 6) % 18;
                         let dy = y % 8;
-                        let p = A[dy * 18 + dx] == " " ? 0 : 128;
-                        pixels[i++] = p;
-                        pixels[i++] = p;
-                        pixels[i++] = p;
+                        let p = A[dy * 18 + dx] == " " ? 0 : 1;
+                        let c = Math.floor(cy / 2) % 7 + 1;
+                        let b = cy % 2 == 0 ? 255 : 127
+                        pixels[i++] = p * b * (c & 1);
+                        pixels[i++] = p * b * ((c >> 1) & 1);
+                        pixels[i++] = p * b * ((c >> 2) & 1);
                         pixels[i++] = 255;
                     }
                 }
